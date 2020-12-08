@@ -1,11 +1,10 @@
 package com.example.endterm
-
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.findNavController
@@ -19,53 +18,59 @@ import retrofit2.Response
 
 
 class DetailFragment : Fragment() {
-    private lateinit var idText: TextView
     private lateinit var title: TextView
-    private lateinit var description: TextView
-    private lateinit var status: TextView
-    private lateinit var item: ToDo
+    private lateinit var body: TextView
+    private lateinit var btn: Button
+
+
+    private lateinit var item: Post
+    val args: DetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_detail, container, false)
+        val rootview = inflater.inflate(R.layout.fragment_detail, container, false)
+        return rootview
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        idText = view.findViewById(R.id.id)
         title = view.findViewById(R.id.title)
-        description = view.findViewById(R.id.description)
-        status = view.findViewById(R.id.status)
-        val idToDo = arguments?.getInt("ToDoId")!!
+        body = view.findViewById(R.id.body)
+        btn = view.findViewById(R.id.comments)
+
+        val idToDo = args.todoId
         getById(idToDo)
+
         back.setOnClickListener()
         {
             val action = DetailFragmentDirections.actionDetailToTodo()
             view.findNavController().navigate(action)
         }
+        btn.setOnClickListener(){
+            val action = DetailFragmentDirections.actionDetailToTodo()
+            action.idToDo = item.id
+            view.findNavController().navigate(action)
+        }
     }
 
-    private fun getById(id: Int) {
+    fun getById(id: Int) {
+        val apiService: ApiService? = ApiClient.client?.create(ApiService::class.java)
+        val call: Call<Post>? = apiService?.getTodoById(id)
 
-        ApiClient.getApiService().getTodoById(id).enqueue(object : Callback<ToDo> {
-            @SuppressLint("SetTextI18n")
+        call?.enqueue(object : Callback<Post> {
             override fun onResponse(
-                call: Call<ToDo>?,
-                response: Response<ToDo>
+                call: Call<Post>?,
+                response: Response<Post>
             ) {
-                if (response.isSuccessful) {
-                    item = response.body()!!
-                    idText.text = "Task ID: " + item.id.toString()
-                    title.text = "Task Title: " + item.title
-                    description.text = "User Id: " + item.userId.toString()
-                    status.text = "Task Status: " + item.completed.toString()
+                item = response.body() as Post
+                title.text = item.title
+                body.text = item.body
 
-                }
             }
 
-            override fun onFailure(call: Call<ToDo>?, t: Throwable) {
+            override fun onFailure(call: Call<Post>?, t: Throwable) {
                 Toast.makeText(context, "error", Toast.LENGTH_LONG).show()
             }
         })

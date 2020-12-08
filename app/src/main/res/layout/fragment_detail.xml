@@ -11,58 +11,32 @@
         android:layout_height="wrap_content"
         android:text="Go Back"
         />
-    <TextView
-        android:id="@+id/id"
-        android:layout_below="@id/back"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/comments"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_below="@+id/back"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:textSize="35sp" />
+        android:text="Comments" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/id"
         android:layout_margin="10dp"
+        android:layout_below="@id/comments"
         android:layout_marginTop="10dp"
         android:textSize="35sp" />
 
     <TextView
-        android:id="@+id/description"
+        android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:textSize="35sp" />
-
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/description"
-        android:layout_margin="10dp"
-        android:layout_marginTop="10dp"
-        android:textSize="35sp" />
-
-    <TextView
-        android:id="@+id/category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/status"
-        android:layout_margin="10dp"
-        android:layout_marginTop="10dp"
-        android:textSize="10sp" />
-
-    <TextView
-        android:id="@+id/duration"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/category"
-        android:layout_margin="10dp"
-        android:layout_marginTop="10dp"
-        android:textSize="10sp" />
-
 
 </RelativeLayout>

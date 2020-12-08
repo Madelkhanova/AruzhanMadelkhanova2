@@ -1,21 +1,22 @@
 package com.example.endterm.network
 
 
-import com.example.endterm.ToDo
-import com.google.gson.JsonObject
+import com.example.endterm.Comment
+import com.example.endterm.Post
 import retrofit2.Call
-import retrofit2.http.*
-
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("todos")
-    fun getTodos(): Call<List<ToDo>>
+    @GET("posts/")
+    fun getTodos(): Call<List<Post>>
 
-    @POST("todos")
-    fun postTodos(@Body body: JsonObject): Call<JsonObject>
+    @GET("posts/{id}/")
+    fun getTodoById(@Path("id") todoId: Int): Call<Post>
 
-    @GET("todos/{id}")
-    fun getTodoById(@Path("id") todoId: Int): Call<ToDo>
-
+    @GET("comments")
+    fun getToIdComment(@Query("postId") todoId: Int): Call<List<Comment>>
 }

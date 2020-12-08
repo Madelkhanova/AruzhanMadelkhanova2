@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,21 +17,22 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ToDoListFragment : Fragment(), ToDoListAdapter.ItemClickListener {
-    lateinit var toDoList: MutableList<ToDo>
+class PostListFragment : Fragment() {
+    lateinit var toDoList: MutableList<Post>
     private lateinit var myRecyclerView: RecyclerView
-    private lateinit var viewAdapter: ToDoListAdapter
+    private lateinit var viewAdapter: PostListAdapter
     private lateinit var viewManager: LinearLayoutManager
-
-    val args = arguments?.let { ToDoListFragmentArgs.fromBundle(it) }
+    private var listener: PostListAdapter.ItemClickListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_to_do_list, container, false)
         toDoList = ArrayList()
 
+        //for recyclerView
         myRecyclerView = rootView.findViewById(R.id.myRecyclerView)
         viewManager = LinearLayoutManager(context)
         myRecyclerView.layoutManager = viewManager
@@ -43,10 +42,21 @@ class ToDoListFragment : Fragment(), ToDoListAdapter.ItemClickListener {
         )
         myRecyclerView.addItemDecoration(dividerItemDecoration)
 
+        //listener for Details
+        //listener = object : PostListAdapter.ItemClickListener {
+         //   override fun itemClick(position: Int, item: Post?) {
+          //      val action = PostListFragmentDirections.
+           //     if (item != null) {
+          //          action.todoId = item.id
+           //     }
+           //     rootView.findNavController().navigate(action)
+          //  }
+       // }
+        //create adapter, to recyclerview
         viewAdapter = context?.let {
-            ToDoListAdapter(
+            PostListAdapter(
                 toDoList, it,
-                this
+                listener as PostListAdapter.ItemClickListener
             )
         }!!
         myRecyclerView.adapter = viewAdapter
@@ -55,46 +65,24 @@ class ToDoListFragment : Fragment(), ToDoListAdapter.ItemClickListener {
         getList()
         return rootView
     }
+    fun getList() {
+        val apiService: ApiService? = ApiClient.client?.create(ApiService::class.java)
+        val call: Call<List<Post>>? = apiService?.getTodos()
+        val list = ArrayList<Post>()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        addItem.setOnClickListener {
-            val action = ToDoListFragmentDirections.actionTodoToAddToDo()
-            view.findNavController().navigate(action)
-            addItem.visibility = View.GONE
-        }
-
-    }
-
-    private fun getList() {
-        val list = ArrayList<ToDo>()
-        ApiClient.getApiService().getTodos().enqueue(object : Callback<List<ToDo>?> {
+        call?.enqueue(object : Callback<List<Post>?> {
             override fun onResponse(
-                call: Call<List<ToDo>?>?,
-                response: Response<List<ToDo>?>
+                call: Call<List<Post>?>?,
+                response: Response<List<Post>?>
             ) {
-                list.addAll(response.body() as ArrayList<ToDo>)
-                try {
-                    if (args != null) {
-                        Toast.makeText(context, args.userId, Toast.LENGTH_LONG).show()
-                        list.add(0, ToDo(args.idToDo, args.userId, args.title, args.complete))
-                    }
-                } catch (e: Exception) {
-                }
+                list.addAll(response.body() as ArrayList<Post>)
                 viewAdapter.todolist = list
                 viewAdapter.notifyDataSetChanged()
             }
 
-            override fun onFailure(call: Call<List<ToDo>?>?, t: Throwable) {
+            override fun onFailure(call: Call<List<Post>?>?, t: Throwable) {
                 Toast.makeText(context, "error", Toast.LENGTH_LONG).show()
             }
         })
-    }
-
-    override fun itemClick(position: Int, item: ToDo?) {
-        val bundle = Bundle()
-        bundle.putInt("ToDoId", item?.id!!)
-        findNavController().navigate(R.id.detailFragment, bundle)
     }
 }

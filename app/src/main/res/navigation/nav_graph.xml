@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/toDoListFragment"
-        android:name="com.example.endterm.ToDoListFragment"
+        android:name="com.example.endterm.PostListFragment"
         android:label="ToDoListFragment">
         <action
             android:id="@+id/action_todo_to_addToDo"
@@ -43,14 +43,14 @@
             android:defaultValue=""
             app:argType="string" />
         <argument
-            android:name="complete"
-            android:defaultValue="false"
-            app:argType="boolean" />
+            android:name="body"
+            android:defaultValue=""
+            app:argType="string" />
 
     </fragment>
     <fragment
         android:id="@+id/addListFragment"
-        android:name="com.example.endterm.AddTodoFragment"
+        android:name="com.example.endterm.CommentsFragment"
         android:label="AddListFragment">
 
         <action
@@ -74,11 +74,14 @@
                 app:argType="string"
                 android:defaultValue='""' />
             <argument
-                android:name="complete"
-                app:argType="boolean"
-                android:defaultValue="false" />
+                android:name="body"
+                app:argType="string"
+                android:defaultValue="" />
         </action>
-
+        <argument
+            android:name="todoId"
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
@@ -91,5 +94,14 @@
             android:name="todo_id"
             android:defaultValue="-1"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_detail_to_comment"
+            app:destination="@id/addListFragment">
+            <argument
+                android:name="todoId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+        </action>
+
     </fragment>
 </navigation>
